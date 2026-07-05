@@ -35,28 +35,32 @@ Uma aplicação web de controle financeiro pessoal com uma estética retro-futur
 
 No editor SQL do seu painel do Supabase, execute o seguinte script para provisionar a tabela necessária:
 
-  '''create table lancamentos (
-    id uuid default gen_random_uuid() primary key,
-    user_id uuid references auth.users not null, -- Vincula o gasto ao usuário logado
-    tipo text not null, -- 'receita' ou 'despesa'
-    valor numeric not null,
-    categoria text not null,
-    descricao text,
-    created_at timestamp with time zone default timezone('utc'::text, now()) not null
-  );
-  
-  -- Ativar Row Level Security (Segurança para um usuário não ver os dados do outro)
-  alter table lancamentos enable row level security;
-  
-  -- Criar a política que permite usuários lerem/escreverem apenas seus próprios dados
-  create policy "Usuários podem gerenciar seus próprios lançamentos" 
-  on lancamentos for all 
-  using (auth.uid() = user_id);'''
+  ```
+   create table lancamentos (
+       id uuid default gen_random_uuid() primary key,
+       user_id uuid references auth.users not null, -- Vincula o gasto ao usuário logado
+       tipo text not null, -- 'receita' ou 'despesa'
+       valor numeric not null,
+       categoria text not null,
+       descricao text,
+       created_at timestamp with time zone default timezone('utc'::text, now()) not null
+     );
+     
+     -- Ativar Row Level Security (Segurança para um usuário não ver os dados do outro)
+     alter table lancamentos enable row level security;
+     
+     -- Criar a política que permite usuários lerem/escreverem apenas seus próprios dados
+     create policy "Usuários podem gerenciar seus próprios lançamentos" 
+     on lancamentos for all 
+     using (auth.uid() = user_id);
+```
 
 ---
 
 ## 🔐 Insira as credenciais:
 Abra o arquivo index.html e substitua as constantes pelas chaves do seu projeto:
 
-  '''const SUPABASE_URL = "SUA_URL_DO_SUPABASE";
-  const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_DO_SUPABASE";'''
+  ```
+     const SUPABASE_URL = "SUA_URL_DO_SUPABASE";
+     const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_DO_SUPABASE";
+  ```

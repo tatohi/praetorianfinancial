@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRAETORIAN FINANCIAL NETWORK v3.17</title>
+<style>
+/* PALETA RETRO REFINADA - FÓSFORO ACETINADO COMFORT */
+:root {
+    --neon-green: #33ff88;      
+    --dim-green: #1a8844;       
+    --dark-green: #082211;      
+    --dark-bg: #0d0f0e;         
+    --box-border: #163820;      
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--neon-green);
+    font-family: "Courier New", Courier, monospace;
+    font-size: 14px;
+    padding: 15px;
+    margin: 0;
+    text-shadow: 0 0 1px rgba(51, 255, 136, 0.3);
+    box-sizing: border-box;
+    min-height: 100vh;
+    position: relative;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+/* INPUTS ADAPTÁVEIS PARA PC E CELULAR */
+input, select, button {
+    background: #000;
+    color: var(--neon-green);
+    border: 1px solid var(--box-border);
+    padding: 10px;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    outline: none;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.8);
+    width: 100%; 
+    max-width: 100%;
+    margin-bottom: 5px;
+}
+
+input:focus, select:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 8px rgba(51, 255, 136, 0.4);
+}
+
+button {
+    cursor: pointer;
+    background: var(--dark-green);
+    font-weight: bold;
+    text-transform: uppercase;
+    border-color: var(--dim-green);
+    padding: 12px;
+}
+
+button:hover {
+    background: var(--neon-green);
+    color: #000;
+    box-shadow: 0 0 12px rgba(51, 255, 136, 0.6);
+}
+
+/* CAIXAS RETRO COM ALTURA CONTROLADA */
+.box {
+    border: 1px solid var(--box-border);
+    padding: 18px;
+    margin-bottom: 25px;
+    background-color: #040605;
+    position: relative;
+}
+
+.box::before {
+    content: " [ " attr(data-title) " ] ";
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    background: var(--dark-bg);
+    padding: 0 8px;
+    font-weight: bold;
+    font-size: 11px;
+    color: var(--dim-green);
+    letter-spacing: 1px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* GRID ADAPTÁVEL */
+.grid-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 20px;
+}
+
+/* BARRA DE ROLAGEM MINIMALISTA TERMINAL */
+.data-list {
+    max-height: 290px;  
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.5;
+    padding-right: 5px;
+}
+
+.data-list::-webkit-scrollbar {
+    width: 6px;
+}
+.data-list::-webkit-scrollbar-track {
+    background: #000;
+}
+.data-list::-webkit-scrollbar-thumb {
+    background: var(--box-border);
+    border: 1px solid var(--dim-green);
+}
+
+/* METERS DE GASTO */
+.meter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 12px;
+}
+.meter-label {
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.meter-container {
+    flex: 1;
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+}
+progress {
+    width: 100%;
+    height: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid var(--box-border);
+    background: #000;
+}
+progress::-webkit-progress-bar { background: #000; }
+progress::-webkit-progress-value { background: var(--neon-green); }
+progress::-moz-progress-bar { background: var(--neon-green); }
+
+.meter-perc {
+    width: 35px;
+    text-align: right;
+}
+
+.cursor { animation: blink 0.8s infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+header {
+    border-bottom: 1px solid var(--box-border);
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+header h1 {
+    margin: 0;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+.sys-info {
+    font-size: 10px;
+    color: var(--dim-green);
+    text-align: left;
+    margin-top: 5px;
+}
+
+@media(min-width: 600px) {
+    header h1 { font-size: 22px; }
+    .sys-info { text-align: right; margin-top: 0; }
+}
+
+/* EASTER EGG: O PI SECO DE "THE NET" */
+#the-net-pi {
+    position: fixed;
+    bottom: 12px;
+    right: 15px;
+    font-size: 18px; 
+    color: #1a8844; /* Verde fosco, sutil e classudo */
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    z-index: 999999 !important; /* Sempre no topo absoluto */
+}
+#the-net-pi:hover {
+    color: var(--neon-green);
+    text-shadow: 0 0 10px var(--neon-green);
+    transform: scale(1.2);
+}
+
+/* REGRAS DE IMPRESSÃO */
+@media print {
+    body { background: #fff !important; color: #000 !important; text-shadow: none !important; padding: 0; }
+    header, #app-screen, .box, button, select, input, #the-net-pi { display: none !important; }
+    #print-zone { display: block !important; font-family: "Courier New", monospace; font-size: 12px; color: #000; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border-bottom: 1px dashed #000; padding: 6px; text-align: left; }
+    th { border-bottom: 2px solid #000; text-transform: uppercase; }
+    .text-right { text-align: right; }
+}
+#print-zone { display: none; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<header>
+    <h1>PRAETORIAN FINANCIAL NETWORK v3.17</h1>
+    <div class="sys-info">SECURE CONNECTION // PROTOCOL: TRON_GREEN // DATA_STREAM: OK</div>
+</header>
+
+<!-- LOGIN -->
+<div id="login-screen" class="box" data-title="SECURITY CHECK">
+    <p style="margin: 0 0 5px 0;">USUÁRIO (EMAIL):</p>
+    <input id="user" type="email" placeholder="root@praetorian.com"><br><br>
+    <p style="margin: 0 0 5px 0;">CHAVE DE ACESSO:</p>
+    <input id="pass" type="password" placeholder="********"><br><br>
+    <button onclick="logar()">INICIAR SESSÃO</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="app-screen" class="hidden">
+    
+    <div class="box" data-title="FINANCIAL ACCOUNT STATEMENT">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div style="width: 100%; max-width: 250px;">
+                <p style="margin: 0 0 5px 0; color: var(--dim-green); font-size: 12px;">PERÍODO CONSOLIDADO:</p>
+                <select id="filtro-mes" onchange="renderCore()"></select>
+            </div>
+            <div style="flex: 1; text-align: right; min-width: 200px;">
+                <span style="font-size: 13px; color: var(--dim-green);">SALDO: </span>
+                <span id="saldo" style="font-size: 16px; font-weight:bold; letter-spacing: 1px; display: inline-block; margin-right: 10px;">R$ 0.00</span>
+                <button onclick="imprimirRelatorio()" style="padding: 5px 10px; font-size: 11px; width: auto; margin: 0;">[IMPRIMIR]</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-dashboard">
+        
+        <!-- FORMULÁRIO -->
+        <div class="box" data-title="COMMAND: RECORD TRANSACTION">
+            <p style="margin: 0 0 4px 0; color: var(--dim-green); font-size: 12px;">DATA DO REGISTRO:</p>
+            <input type="date" id="lanc-data"><br><br>
+
+            <p style="margin: 0 0 4px 0; color: var(--dim-green); font-size: 12px;">TIPO:</p>
+            <select id="tipo">
+                <option value="receita">RECEITA (+)</option>
+                <option value="despesa">DESPESA (-)</option>
+            </select><br><br>
+
+            <p style="margin: 0 0 4px 0; color: var(--dim-green); font-size: 12px;">VALOR (R$):</p>
+            <input type="number" step="0.01" id="valor" placeholder="0.00"><br><br>
+
+            <p style="margin: 0 0 4px 0; color: var(--dim-green); font-size: 12px;">CATEGORIA:</p>
+            <select id="categoria">
+                <option>Moradia</option>
+                <option>Alimentação</option>
+                <option>Saúde</option>
+                <option>Veículos</option>
+                <option>Educação</option>
+                <option>Transporte</option>
+                <option>Mercado</option>
+                <option>Dívidas</option>
+                <option>Lazer</option>
+                <option>Assinaturas</option>
+                <option>Investimentos</option>
+                <option>Recebimentos</option>
+                <option>Outros</option>
+            </select><br><br>
+
+            <p style="margin: 0 0 4px 0; color: var(--dim-green); font-size: 12px;">DESCRIÇÃO:</p>
+            <input type="text" id="desc" placeholder="IDENTIFICADOR"><br><br>
+            
+            <button onclick="adicionarLancamento()">EXECUTAR ESCRITA</button>
+        </div>
+
+        <!-- EXIBIÇÃO -->
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <div class="box" data-title="LOG: HISTÓRICO DE TRANSAÇÕES" style="flex: 1;">
+                <div id="historico" class="data-list"></div>
+            </div>
+            
+            <div class="box" data-title="VISUAL METERS: DESPESAS">
+                <div id="grafico" class="data-list" style="max-height: 170px;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <p style="margin-top: 20px;"><button onclick="logout()" style="width: auto; padding: 8px 15px; font-size: 11px;">LOGOUT / DISCONNECT</button></p>
+    <p>> SYSTEM OPERATIONAL.<span class="cursor">_</span></p>
+    </div>
+
+    <div id="the-net-pi" onclick="revealGate()">π</div>
+
+    <div id="print-zone"></div>
+</div>
+
+<div id="print-zone"></div>
+
+<script>
+const SUPABASE_URL = "SUPABASE-URL"; 
+const SUPABASE_ANON_KEY = "SUPABASE_ANON_KEY";
+
+let supabaseClient;
+let listaLancamentos = [];
+
+const MESES = ["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
+
+window.onload = async () => {
+    document.getElementById('lanc-data').valueAsDate = new Date();
+    
+    try {
+        if (typeof supabase === 'undefined') return;
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) startSecureSession();
+    } catch (err) { console.error(err); }
+};
+
+async function logar() {
+    let email = document.getElementById("user").value;
+    let pass = document.getElementById("pass").value;
+    if (!email || !pass) return;
+    try {
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+        if(error) alert("ACCESS DENIED: " + error.message);
+        else startSecureSession();
+    } catch (err) { console.error(err); }
+}
+
+async function logout() {
+    await supabaseClient.auth.signOut();
+    document.getElementById("app-screen").classList.add("hidden");
+    document.getElementById("login-screen").classList.remove("hidden");
+}
+
+async function startSecureSession() {
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("app-screen").classList.remove("hidden");
+    await syncAllData();
+}
+
+async function syncAllData() {
+    try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+        const { data, error } = await supabaseClient.from('lancamentos').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        listaLancamentos = data || [];
+
+        let filtroSelect = document.getElementById("filtro-mes");
+        let valorSelecionadoAnteriormente = filtroSelect ? filtroSelect.value : null;
+
+        // Mapeia os anos e seus respectivos meses existentes
+        // Estrutura: { 2026: Set([5, 4]), 2027: Set([0]) }
+        let mapaCronologico = {};
+        listaLancamentos.forEach(l => {
+            let d = new Date(l.created_at);
+            let m = d.getUTCMonth();
+            let a = d.getUTCFullYear();
+            if (!mapaCronologico[a]) mapaCronologico[a] = new Set();
+            mapaCronologico[a].add(m);
+        });
+
+        // Ordena os anos de forma decrescente
+        let anosOrdenados = Object.keys(mapaCronologico).map(Number).sort((a, b) => b - a);
+
+        // Montar o HTML do SELECT dinamicamente
+        let comboHtml = `<option value="TODOS">-- HISTÓRICO COMPLETO --</option>`;
+        
+        anosOrdenados.forEach(ano => {
+            // Injeta o Filtro Consolidado do Ano Inteiro
+            comboHtml += `<option value="ANO-${ano}" style="font-weight: bold; background: #1a1a1a; color: var(--neon-green);">-- ANO ${ano} --</option>`;
+            
+            // Ordena os meses daquele ano de forma decrescente
+            let mesesDoAno = Array.from(mapaCronologico[ano]).sort((a, b) => b - a);
+            mesesDoAno.forEach(m => {
+                let nomeMes = MESES[m];
+                let anoShort = String(ano).substring(2);
+                comboHtml += `<option value="${m}-${ano}">&nbsp;&nbsp;${nomeMes}/${anoShort}</option>`;
+            });
+        });
+
+        filtroSelect.innerHTML = comboHtml;
+
+        // Seleção inteligente (Mês/Ano Real Corrente)
+        let dataHoje = new Date();
+        let chaveMesCorrente = `${dataHoje.getMonth()}-${dataHoje.getFullYear()}`;
+
+        if (valorSelecionadoAnteriormente && comboHtml.includes(`value="${valorSelecionadoAnteriormente}"`)) {
+            filtroSelect.value = valorSelecionadoAnteriormente;
+        } else if (comboHtml.includes(`value="${chaveMesCorrente}"`)) {
+            filtroSelect.value = chaveMesCorrente;
+        } else if (anosOrdenados.length > 0) {
+            // Se não houver o mês atual, abre o ano mais recente disponível
+            filtroSelect.value = `ANO-${anosOrdenados[0]}`;
+        } else {
+            filtroSelect.value = "TODOS";
+        }
+
+        renderCore();
+    } catch (err) { console.error(err); }
+}
+
+async function adicionarLancamento() {
+    let tipo = document.getElementById("tipo").value;
+    let valor = parseFloat(document.getElementById("valor").value);
+    let categoria = document.getElementById("categoria").value;
+    let desc = document.getElementById("desc").value;
+    let dataCampo = document.getElementById("lanc-data").value;
+    if(!valor) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    let objetoInsercao = { user_id: user.id, tipo, valor, categoria, descricao: desc };
+    
+    if (dataCampo) {
+        let partes = dataCampo.split('-');
+        let dataLocal = new Date(partes[0], partes[1] - 1, partes[2], 12, 0, 0);
+        objetoInsercao.created_at = dataLocal.toISOString();
+    }
+
+    const { error } = await supabaseClient.from('lancamentos').insert([objetoInsercao]);
+    if (error) alert("WRITE ERROR: " + error.message);
+    else { 
+        document.getElementById("valor").value = "";
+        document.getElementById("desc").value = "";
+        document.getElementById('lanc-data').valueAsDate = new Date();
+        await syncAllData(); 
+    }
+}
+
+function renderCore() {
+    let filtroMesSelection = document.getElementById("filtro-mes").value;
+    let saldoPeriodo = 0;
+    let tabelaLinhasHtml = "";
+    let categoriesGasto = {};
+
+    listaLancamentos.forEach(l => {
+        let dataLanc = new Date(l.created_at);
+        let ano = dataLanc.getUTCFullYear();
+        let mesZeroBased = dataLanc.getUTCMonth();
+        let diaNum = dataLanc.getUTCDate();
+
+        // LÓGICA DE FILTRAGEM
+        let chaveLancamento = `${mesZeroBased}-${ano}`;
+        if (filtroMesSelection !== "TODOS") {
+            if (filtroMesSelection.startsWith("ANO-")) {
+                let anoFiltro = filtroMesSelection.split("-")[1];
+                if (ano.toString() !== anoFiltro.toString()) return; // Correção de String vs Number
+            } else if (filtroMesSelection !== chaveLancamento) {
+                return;
+            }
+        }
+
+        let diaStr = String(diaNum).padStart(2, '0');
+        let mesStr = String(mesZeroBased + 1).padStart(2, '0');
+        let anoShort = String(ano).substring(2);
+        let dataExibicao = `${diaStr}/${mesStr}/${anoShort}`;
+
+        let sinal = l.tipo === 'receita' ? '+' : '-';
+        let valorNum = parseFloat(l.valor);
+
+        if(l.tipo === "receita") saldoPeriodo += valorNum;
+        else saldoPeriodo -= valorNum;
+
+        let descTratada = l.descricao || 'S/D';
+        let catTratada = l.categoria || 'OUTROS';
+        let valorFormatado = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        tabelaLinhasHtml += `
+            <tr style="border-bottom: 1px dashed #112211;">
+                <td style="color: var(--dim-green); padding: 4px 0; white-space: nowrap; width: 75px;">[${dataExibicao}]</td>
+                <td style="color: var(--dim-green); padding: 4px 0; white-space: nowrap; width: 35px;">[${sinal}]</td>
+                <td style="color: var(--neon-green); padding: 4px 0; text-transform: uppercase; white-space: nowrap; width: 110px; overflow: hidden; text-overflow: ellipsis;">${catTratada}</td>
+                <td style="color: #666; padding: 4px 0; padding-left: 5px;">- ${descTratada}</td>
+                <td style="color: #ffffff; font-weight: bold; padding: 4px 0; text-align: right; white-space: nowrap; width: 100px;">R$ ${valorFormatado}</td>
+            </tr>
+        `;
+        
+        if(l.tipo === "despesa") {
+            categoriesGasto[l.categoria] = (categoriesGasto[l.categoria] || 0) + valorNum;
+        }
+    });
+
+    document.getElementById("saldo").innerText = "R$ " + saldoPeriodo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    document.getElementById("historico").innerHTML = tabelaLinhasHtml 
+        ? `<table style="width: 100%; border-collapse: collapse; font-family: 'Courier New', monospace; font-size: 12px;">${tabelaLinhasHtml}</table>`
+        : "<p style='color:var(--dim-green)'>NENHUM REGISTRO LOCALIZADO.</p>";
+
+    let totalDespesas = Object.values(categoriesGasto).reduce((a, b) => a + b, 0);
+    let metersHtml = "";
+    for(let c in categoriesGasto){
+        let perc = totalDespesas > 0 ? (categoriesGasto[c] / totalDespesas) * 100 : 0;
+        metersHtml += `
+            <div class="meter-row">
+                <div class="meter-label">${c.toUpperCase()}</div>
+                <div class="meter-container"><progress value="${perc}" max="100"></progress></div>
+                <div class="meter-perc">${perc.toFixed(0)}%</div>
+            </div>
+        `;
+    }
+    document.getElementById("grafico").innerHTML = totalDespesas > 0 ? metersHtml : "<p style='color:var(--dim-green)'>SEM DESPESAS NESTE PERÍODO</p>";
+}
+
+function imprimirRelatorio() {
+    let filtroMesSelection = document.getElementById("filtro-mes").value;
+    let nomeMes = document.getElementById("filtro-mes").options[document.getElementById("filtro-mes").selectedIndex].text;
+    
+    let lancamentosFiltrados = listaLancamentos.filter(l => {
+        let dataLanc = new Date(l.created_at);
+        let ano = dataLanc.getUTCFullYear();
+        let mesZeroBased = dataLanc.getUTCMonth();
+        let chaveLancamento = `${mesZeroBased}-${ano}`;
+        
+        if (filtroMesSelection === "TODOS") return true;
+        if (filtroMesSelection.startsWith("ANO-")) {
+            let anoFiltro = filtroMesSelection.split("-")[1];
+            return ano.toString() === anoFiltro.toString();
+        }
+        return filtroMesSelection === chaveLancamento;
+    });
+
+    let cronologico = [...lancamentosFiltrados].reverse();
+    let subtotalAcumulado = 0;
+    let tabelaLinhasHtml = "";
+    let categoriesGastoPrint = {};
+
+    cronologico.forEach(l => {
+        let dataLanc = new Date(l.created_at);
+        let ano = dataLanc.getUTCFullYear();
+        let dia = String(dataLanc.getUTCDate()).padStart(2, '0');
+        let mes = String(dataLanc.getUTCMonth() + 1).padStart(2, '0');
+        let dataExibicao = `${dia}/${mes}/${ano}`;
+
+        let valorNum = parseFloat(l.valor);
+        let sinal = l.tipo === 'receita' ? '+' : '-';
+
+        if (l.tipo === 'receita') subtotalAcumulado += valorNum;
+        else {
+            subtotalAcumulado -= valorNum;
+            categoriesGastoPrint[l.categoria] = (categoriesGastoPrint[l.categoria] || 0) + valorNum;
+        }
+
+        let vPrint = valorNum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        let subPrint = subtotalAcumulado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        tabelaLinhasHtml += `<tr><td>[${dataExibicao}]</td><td>${l.categoria.toUpperCase()}</td><td>${l.descricao || 'S/D'}</td><td class="text-right">(${sinal}) R$ ${vPrint}</td><td class="text-right">R$ ${subPrint}</td></tr>`;
+    });
+
+    let totalDespesasPrint = Object.values(categoriesGastoPrint).reduce((a, b) => a + b, 0);
+    let metersPrintHtml = "";
+    const CORES_PRINT = ['#10b981', '#06b6d4', '#8b5cf6', '#3b82f6', '#ec4899', '#64748b'];
+    let idxCor = 0;
+
+    for (let c in categoriesGastoPrint) {
+        let perc = totalDespesasPrint > 0 ? (categoriesGastoPrint[c] / totalDespesasPrint) * 100 : 0;
+        let corBarra = CORES_PRINT[idxCor % CORES_PRINT.length];
+        idxCor++;
+
+        metersPrintHtml += `
+            <div style="display: flex; align-items: center; margin-bottom: 10px; font-size: 11px; font-family: 'Courier New', monospace; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                <div style="width: 130px; font-weight: bold; color: #333;">${c.toUpperCase()}</div>
+                <div style="flex: 1; background-color: #f1f5f9; height: 14px; margin: 0 15px; border: 1px solid #cbd5e1; position: relative;">
+                    <div style="background-color: ${corBarra} !important; width: ${perc}%; height: 100%; border-right: 2px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact;"></div>
+                </div>
+                <div style="width: 50px; text-align: right; font-weight: bold; color: #000;">${perc.toFixed(0)}%</div>
+            </div>
+        `;
+    }
+
+    let dataEmissao = new Date().toLocaleDateString('pt-BR') + " " + new Date().toLocaleTimeString('pt-BR');
+    let subTotalFinalPrint = subtotalAcumulado.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    document.getElementById("print-zone").innerHTML = `
+        <div style="border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
+            <h2 style="margin: 0; letter-spacing: 1px;">PRAETORIAN FINANCIAL NETWORK // FINANCIAL REPORT</h2>
+            <p style="margin: 5px 0 0 0; font-size: 11px;">PERÍODO: ${nomeMes.replace(/--/g, '').trim()} // EMISSÃO: ${dataEmissao}</p>
+        </div>
+        <table>
+            <thead><tr><th style="width: 15%;">DATA</th><th style="width: 18%;">CATEGORIA</th><th style="width: 32%;">DESCRIÇÃO</th><th style="width: 18%; text-align: right;">VALOR</th><th style="width: 17%; text-align: right;">SUBTOTAL</th></tr></thead>
+            <tbody>${tabelaLinhasHtml || '<tr><td colspan="5">NENHUM REGISTRO ENCONTRADO.</td></tr>'}</tbody>
+        </table>
+        <div style="margin-top: 20px; border-top: 1px solid #000; padding-top: 10px; text-align: right;">
+            <strong>SALDO CONSOLIDADO DO PERÍODO: R$ ${subTotalFinalPrint}</strong>
+        </div>
+        ${totalDespesasPrint > 0 ? `
+            <div style="margin-top: 40px; page-break-inside: avoid;">
+                <h3 style="margin: 0 0 15px 0; border-bottom: 1px solid #000; padding-bottom: 5px; font-size: 13px; letter-spacing: 1px; color: #000;">DISTRIBUIÇÃO DE DESPESAS (VISUAL METERS)</h3>
+                <div style="max-width: 520px; background: #fafafa; padding: 15px; border: 1px dashed #94a3b8;">
+                    ${metersPrintHtml}
+                </div>
+            </div>
+        ` : ''}
+    `;
+    window.print();
+}
+
+function revealGate() {
+    alert("PRAETORIAN DEFENSE INITIATED // GATEWAY: GATE__PI // STATUS: ENCRYPTED_ACCESS_CONNECTED");
+}
+</script>
+</body>
+</html>

@@ -27,8 +27,9 @@ Uma aplicação web de controle financeiro pessoal com uma estética retro-futur
 
 1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/seu-usuario/praetorian-financial.git](https://github.com/seu-usuario/praetorian-financial.git)
-
+   git clone [https://github.com/tatohi/praetorianfinancial.git](https://github.com/tatohi/praetorianfinancial.git)
+   ```
+   
 ---
 
 ## 💾 Configure o Banco de Dados (Supabase):

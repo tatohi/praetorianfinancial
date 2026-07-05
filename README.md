@@ -29,7 +29,7 @@ Uma aplicação web de controle financeiro pessoal com uma estética retro-futur
    ```bash
    git clone [https://github.com/seu-usuario/praetorian-financial.git](https://github.com/seu-usuario/praetorian-financial.git)
 
-===
+---
 
 ## 💾 Configure o Banco de Dados (Supabase):
 

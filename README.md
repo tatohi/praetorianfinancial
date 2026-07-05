@@ -35,7 +35,7 @@ Uma aplicação web de controle financeiro pessoal com uma estética retro-futur
 
 No editor SQL do seu painel do Supabase, execute o seguinte script para provisionar a tabela necessária:
 
-  create table lancamentos (
+  '''create table lancamentos (
     id uuid default gen_random_uuid() primary key,
     user_id uuid references auth.users not null, -- Vincula o gasto ao usuário logado
     tipo text not null, -- 'receita' ou 'despesa'
@@ -51,15 +51,12 @@ No editor SQL do seu painel do Supabase, execute o seguinte script para provisio
   -- Criar a política que permite usuários lerem/escreverem apenas seus próprios dados
   create policy "Usuários podem gerenciar seus próprios lançamentos" 
   on lancamentos for all 
-  using (auth.uid() = user_id);
+  using (auth.uid() = user_id);'''
 
 ---
 
 ## 🔐 Insira as credenciais:
 Abra o arquivo index.html e substitua as constantes pelas chaves do seu projeto:
 
-  const SUPABASE_URL = "SUA_URL_DO_SUPABASE";
-  const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_DO_SUPABASE";
-  
-
-
+  '''const SUPABASE_URL = "SUA_URL_DO_SUPABASE";
+  const SUPABASE_ANON_KEY = "SUA_CHAVE_ANON_DO_SUPABASE";'''
